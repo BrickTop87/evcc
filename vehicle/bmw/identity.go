@@ -161,19 +161,17 @@ func (v *Identity) retrieveToken(data url.Values) (*oauth2.Token, error) {
 		"Content-Type":  request.FormContent,
 		"Authorization": v.region.Token.Authorization,
 	})
+	if err != nil {
+		return nil, err
+	}
 
 	var tok oauth2.Token
-	if err == nil {
-		err = v.DoJSON(req, &tok)
-		if err != nil {
-			return nil, err
-		}
-	} else {
+	err = v.DoJSON(req, &tok)
+	if err != nil {
 		return nil, err
 	}
 
 	tokex := util.TokenWithExpiry(&tok)
-
 	err = settings.SetJson(v.settingsKey(), tokex)
 
 	return tokex, err
